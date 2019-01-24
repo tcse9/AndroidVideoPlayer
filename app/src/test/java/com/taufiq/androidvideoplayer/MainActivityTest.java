@@ -38,7 +38,7 @@ public class MainActivityTest{
      */
 
     @Test
-    public void test1(){
+    public void testCheckLiveData(){
 
         assertNotNull(videoModule.getSeekTimeLiveData());
     }
@@ -49,13 +49,8 @@ public class MainActivityTest{
      */
 
     @Test
-    public void test2(){
+    public void testObservableVideoListener(){
         assertNotNull(videoModule.getVideoViewListener());
     }
-
-
-
-
-
 
 }

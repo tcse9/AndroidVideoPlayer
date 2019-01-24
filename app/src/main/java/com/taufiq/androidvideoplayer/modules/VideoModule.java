@@ -90,7 +90,7 @@ public class VideoModule {
      * @param position
      * @return
      */
-    public VideoModule setPrepare(Context context, final UiManager uiManager, final ActivityMainBinding binding, MediaController mediaController, final int position){
+    public void setPrepare(Context context, final UiManager uiManager, final ActivityMainBinding binding, MediaController mediaController, final int position){
         try {
             binding.videoView.setMediaController(mediaController);
             binding.videoView.setVideoPath("android.resource://" + context.getPackageName() + "/" + R.raw.bunny);
@@ -119,8 +119,6 @@ public class VideoModule {
             }
         });
 
-
-        return this;
     }
 }
 
