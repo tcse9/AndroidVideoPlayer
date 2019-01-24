@@ -1,27 +1,28 @@
 package com.taufiq.androidvideoplayer;
 
-import android.arch.lifecycle.ViewModelProviders;
+import android.arch.lifecycle.Observer;
 import android.databinding.DataBindingUtil;
-import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
 import android.widget.MediaController;
 
 import com.taufiq.androidvideoplayer.binders.UiManager;
+import com.taufiq.androidvideoplayer.core.ApplicationSingleton;
 import com.taufiq.androidvideoplayer.databinding.ActivityMainBinding;
-import com.taufiq.androidvideoplayer.listeners.IVideoViewActionListener;
-import com.taufiq.androidvideoplayer.viewmodels.ContentViewModel;
+import com.taufiq.androidvideoplayer.modules.VideoModule;
+import com.taufiq.androidvideoplayer.utils.Constants;
+
+import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ContentViewModel contentViewModel;
     private ActivityMainBinding binding;
     private UiManager uiManager;
     private int position = 0;
     private MediaController mediaController;
-
+    @Inject
+    VideoModule videoModule;
 
 
     @Override
@@ -31,67 +32,53 @@ public class MainActivity extends AppCompatActivity {
         uiManager = new UiManager();
         binding.setUimanager(uiManager);
 
-        contentViewModel = ViewModelProviders.of(this).get(ContentViewModel.class);
 
         init();
     }
 
 
+    /**
+     * Initialization starts from here
+     */
     private void init(){
+
+        ApplicationSingleton.getInstance().getBaseComponents().inject(this);
+
+
         if (mediaController == null) {
             mediaController = new MediaController(MainActivity.this);
         }
 
-        binding.videoView.setVideoViewListener(mVideoViewListener);
-        uiManager.setLoadingProgressBarVisibility(View.VISIBLE);
+        binding.videoView.setVideoViewListener(videoModule.getVideoViewListener());
 
-        try {
-            binding.videoView.setMediaController(mediaController);
-            binding.videoView.setVideoPath("android.resource://" + getPackageName() + "/" + R.raw.bunny);
-            binding.videoView.requestFocus();
-            binding.videoView.start();
 
-        } catch (Exception e) {
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
-        }
+        videoModule.setPrepare(this, uiManager, binding, mediaController, position);
 
-        binding.videoView.requestFocus();
-        binding.videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        videoModule.getSeekTimeLiveData().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer currentTime) {
 
-            public void onPrepared(MediaPlayer mediaPlayer) {
-
-                uiManager.setLoadingProgressBarVisibility(View.GONE);
-
-                binding.videoView.seekTo(position);
-                if (position == 0) {
-                    binding.videoView.start();
-                } else {
-                    binding.videoView.pause();
-                }
             }
         });
+
+
     }
 
 
-    private IVideoViewActionListener mVideoViewListener = new IVideoViewActionListener()
-    {
-        @Override
-        public void onTimeBarSeekChanged(int currentTime)
-        {
-            //TODO what you want
-        }
 
-        @Override
-        public void onResume()
-        {
-            //TODO what you want
-        }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        //we use onSaveInstanceState in order to store the video playback position for orientation change
+        savedInstanceState.putInt(Constants.SEEK_POSITION, binding.videoView.getCurrentPosition());
+        binding.videoView.pause();
+    }
 
-        @Override
-        public void onPause()
-        {
-            //TODO what you want
-        }
-    };
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        //we use onRestoreInstanceState in order to play the video playback from the stored position
+        position = savedInstanceState.getInt(Constants.SEEK_POSITION);
+        binding.videoView.seekTo(position);
+    }
 }

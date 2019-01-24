@@ -12,10 +12,17 @@ public class ObservableVideoView extends VideoView {
     private IVideoViewActionListener mVideoViewListener;
     private boolean mIsOnPauseMode = false;
 
+    /**
+     * Sets the listener
+     * @param listener
+     */
     public void setVideoViewListener(IVideoViewActionListener listener) {
         mVideoViewListener = listener;
     }
 
+    /**
+     * Overriding
+     */
     @Override
     public void pause() {
         super.pause();
@@ -27,6 +34,9 @@ public class ObservableVideoView extends VideoView {
         mIsOnPauseMode = true;
     }
 
+    /**
+     * Overriding
+     */
     @Override
     public void start() {
         super.start();
@@ -40,6 +50,10 @@ public class ObservableVideoView extends VideoView {
         }
     }
 
+    /**
+     * Overriding
+     * @param msec
+     */
     @Override
     public void seekTo(int msec) {
         super.seekTo(msec);

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.taufiq.androidvideoplayer.BuildConfig;
-import com.taufiq.androidvideoplayer.components.BaseComponents;
+import com.taufiq.androidvideoplayer.components.BaseComponents;;
 import com.taufiq.androidvideoplayer.components.DaggerBaseComponents;
 import com.taufiq.androidvideoplayer.modules.VideoModule;
 
