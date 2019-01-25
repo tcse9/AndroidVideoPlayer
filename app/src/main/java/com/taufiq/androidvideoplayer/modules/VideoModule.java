@@ -41,23 +41,28 @@ public class VideoModule {
      */
     private IVideoViewActionListener mVideoViewListener = new IVideoViewActionListener() {
         @Override
-        public void onTimeBarSeekChanged(int currentTime)
-        {
-            //TODO what you want
-            mutableLiveData.setValue(currentTime);
+        public void onTimeBarSeekChanged(boolean ffwdrwd) {
+
+            if(ffwdrwd){
+                //seeking backwards
+                Log.e("*** SEEK", "back");
+            }else {
+                //seeking forward
+                Log.e("*** SEEK", "forw");
+            }
+
         }
 
         @Override
-        public void onResume()
-        {
-            //TODO what you want
+        public void onResume() {
+            Log.e("*** PLAY", "playing");
         }
 
         @Override
-        public void onPause()
-        {
-            //TODO what you want
+        public void onPause() {
+            Log.e("*** PAUSE", "paused");
         }
+
     };
 
     /**

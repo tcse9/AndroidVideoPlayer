@@ -56,11 +56,16 @@ public class ObservableVideoView extends VideoView {
      */
     @Override
     public void seekTo(int msec) {
-        super.seekTo(msec);
 
+        boolean ffwdrwd;
+        if (super.getCurrentPosition() <= msec)
+            ffwdrwd = false;
+        else
+            ffwdrwd = true;
         if (mVideoViewListener != null) {
-            mVideoViewListener.onTimeBarSeekChanged(msec);
+            mVideoViewListener.onTimeBarSeekChanged(ffwdrwd);
         }
+        super.seekTo(msec);
     }
 
     public ObservableVideoView(Context context, AttributeSet attrs) {
