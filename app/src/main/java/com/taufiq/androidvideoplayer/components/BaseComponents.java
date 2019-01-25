@@ -1,11 +1,11 @@
 package com.taufiq.androidvideoplayer.components;
 
-import com.taufiq.androidvideoplayer.MainActivity;
 import com.taufiq.androidvideoplayer.modules.VideoModule;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
+import viewmodels.ContentViewModel;
 
 
 /**
@@ -14,6 +14,7 @@ import dagger.Component;
 @Singleton
 @Component (modules = {VideoModule.class})
 public interface BaseComponents {
+    VideoModule init();
 
-    void inject(MainActivity mainActivity);
+    void inject(ContentViewModel contentViewModel);
 }

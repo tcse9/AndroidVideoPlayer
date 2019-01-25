@@ -1,16 +1,6 @@
 package com.taufiq.androidvideoplayer.modules;
 
 import android.arch.lifecycle.MutableLiveData;
-import android.content.Context;
-import android.media.MediaPlayer;
-import android.util.Log;
-import android.view.View;
-import android.widget.MediaController;
-
-import com.taufiq.androidvideoplayer.R;
-import com.taufiq.androidvideoplayer.binders.UiManager;
-import com.taufiq.androidvideoplayer.databinding.ActivityMainBinding;
-import com.taufiq.androidvideoplayer.listeners.IVideoViewActionListener;
 
 import javax.inject.Singleton;
 
@@ -21,7 +11,7 @@ import dagger.Provides;
 public class VideoModule {
 
 
-    private MutableLiveData<Boolean> mutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> onForwardBackwardCall = new MutableLiveData<>();
     private MutableLiveData<Boolean> onPausedCalled = new MutableLiveData<>();
 
 
@@ -33,101 +23,42 @@ public class VideoModule {
     @Singleton
     public VideoModule init(){
 
-        return new VideoModule();
+        return this;
 
     }
 
-    /**
-     * Assign a {@link IVideoViewActionListener}
-     */
-    private IVideoViewActionListener mVideoViewListener = new IVideoViewActionListener() {
-        @Override
-        public void onTimeBarSeekChanged(boolean ffwdrwd) {
-
-            mutableLiveData.setValue(ffwdrwd);
-
-        }
-
-        @Override
-        public void onResume() {
-            Log.e("*** PLAY", "playing");
-            onPausedCalled.setValue(false);
-        }
-
-        @Override
-        public void onPause() {
-            Log.e("*** PAUSE", "paused");
-            onPausedCalled.setValue(true);
-        }
-
-    };
-
-    /**
-     * Returns an {@link IVideoViewActionListener} object
-     * @return
-     */
-    @Provides
-    @Singleton
-    public IVideoViewActionListener getVideoViewListener() {
-        return mVideoViewListener;
-    }
 
     /**
      * Returns whether the controller button pressed is forward or backward
      * @return
      */
-    @Provides
-    @Singleton
-    public MutableLiveData<Boolean> getSeekTimeLiveData() {
-        return mutableLiveData;
+    public MutableLiveData<Boolean> getOnForwardBackwardCall() {
+        return onForwardBackwardCall;
     }
-
 
     /**
-     * Setup the whole {@link android.widget.VideoView} preparation and loading process
-     * @param context
-     * @param uiManager
-     * @param binding
-     * @param mediaController
-     * @param position
+     * Returns whether the pause/play button is pressed
      * @return
      */
-    public void setPrepare(Context context, final UiManager uiManager, final ActivityMainBinding binding, MediaController mediaController, final int position){
-        try {
-            binding.videoView.setMediaController(mediaController);
-            binding.videoView.setVideoPath("android.resource://" + context.getPackageName() + "/" + R.raw.bunny);
-            binding.videoView.requestFocus();
-            binding.videoView.start();
-
-        } catch (Exception e) {
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
-        }
-
-        uiManager.setLoadingProgressBarVisibility(View.VISIBLE);
-
-        binding.videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-            public void onPrepared(MediaPlayer mediaPlayer) {
-
-                uiManager.setLoadingProgressBarVisibility(View.GONE);
-
-                binding.videoView.seekTo(position);
-                if (position == 0) {
-                    binding.videoView.start();
-                } else {
-                    binding.videoView.pause();
-                }
-            }
-        });
-
-    }
-
-
     public MutableLiveData<Boolean> getOnPausedCalled() {
         return onPausedCalled;
     }
 
+    /**
+     * Sets the boolean value of forward/backward call
+     * @param ffwdrwd
+     */
+    public void setOnForwardBackwardCall(boolean ffwdrwd) {
+       onForwardBackwardCall.setValue(ffwdrwd);
+    }
+
+    /**
+     * Sets the boolean value of paused/play call
+     * @param isPaused
+     */
+    public void setOnPausedCalled(boolean isPaused) {
+        onPausedCalled.setValue(isPaused);
+    }
 }
 
 

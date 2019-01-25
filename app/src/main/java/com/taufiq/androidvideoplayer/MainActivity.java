@@ -1,20 +1,23 @@
 package com.taufiq.androidvideoplayer;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.widget.MediaController;
 import android.widget.Toast;
 
 import com.taufiq.androidvideoplayer.binders.UiManager;
-import com.taufiq.androidvideoplayer.core.ApplicationSingleton;
 import com.taufiq.androidvideoplayer.databinding.ActivityMainBinding;
-import com.taufiq.androidvideoplayer.modules.VideoModule;
 import com.taufiq.androidvideoplayer.utils.Constants;
 
-import javax.inject.Inject;
+import viewmodels.ContentViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private UiManager uiManager;
     private int position = 0;
     private MediaController mediaController;
-    @Inject
-    VideoModule videoModule;
+    private ContentViewModel contentViewModel;
+
 
 
     @Override
@@ -33,9 +36,13 @@ public class MainActivity extends AppCompatActivity {
         uiManager = new UiManager();
         binding.setUimanager(uiManager);
 
+        contentViewModel = ViewModelProviders.of(this).get(ContentViewModel.class);
 
         init();
     }
+
+
+
 
 
     /**
@@ -43,39 +50,79 @@ public class MainActivity extends AppCompatActivity {
      */
     private void init(){
 
-        ApplicationSingleton.getInstance().getBaseComponents().inject(this);
-
 
         if (mediaController == null) {
             mediaController = new MediaController(MainActivity.this);
         }
 
-        binding.videoView.setVideoViewListener(videoModule.getVideoViewListener());
+        setPrepare(this, uiManager, binding, mediaController, position);
 
 
-        videoModule.setPrepare(this, uiManager, binding, mediaController, position);
+        contentViewModel.getOnPausedCalledObservable().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean isPaused) {
+                if(isPaused){
+                    Toast.makeText(MainActivity.this, getString(R.string.paused), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(MainActivity.this, getString(R.string.play), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
-        videoModule.getSeekTimeLiveData().observe(this, new Observer<Boolean>() {
+        contentViewModel.getOnForwardBackwardCallObservable().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean ffwdrwd) {
-                if(ffwdrwd)
+                if(ffwdrwd){
                     Toast.makeText(MainActivity.this, getString(R.string.backward), Toast.LENGTH_SHORT).show();
-                else
+                }else {
                     Toast.makeText(MainActivity.this, getString(R.string.forward), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
 
-        videoModule.getOnPausedCalled().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean isPausedCalled) {
-                if(isPausedCalled)
-                    Toast.makeText(MainActivity.this, getString(R.string.paused), Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(MainActivity.this, getString(R.string.play), Toast.LENGTH_SHORT).show();
+
+    }
+
+
+    /**
+     * Setup the whole {@link android.widget.VideoView} preparation and loading process
+     * @param context
+     * @param uiManager
+     * @param binding
+     * @param mediaController
+     * @param position
+     * @return
+     */
+    public void setPrepare(Context context, final UiManager uiManager, final ActivityMainBinding binding, MediaController mediaController, final int position){
+        try {
+            binding.videoView.setMediaController(mediaController);
+            binding.videoView.setVideoPath("android.resource://" + context.getPackageName() + "/" + R.raw.bunny);
+            binding.videoView.requestFocus();
+            binding.videoView.start();
+            binding.videoView.setVideoViewListener(contentViewModel.mVideoViewListener);
+
+        } catch (Exception e) {
+            Log.e("Error", e.getMessage());
+            e.printStackTrace();
+        }
+
+        uiManager.setLoadingProgressBarVisibility(View.VISIBLE);
+
+        binding.videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+            public void onPrepared(MediaPlayer mediaPlayer) {
+
+                uiManager.setLoadingProgressBarVisibility(View.GONE);
+
+                binding.videoView.seekTo(position);
+                if (position == 0) {
+                    binding.videoView.start();
+                } else {
+                    binding.videoView.pause();
+                }
             }
         });
-
 
     }
 

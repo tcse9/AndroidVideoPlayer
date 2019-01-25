@@ -38,9 +38,9 @@ public class MainActivityTest{
      */
 
     @Test
-    public void testCheckLiveData(){
+    public void testForwardBackwardCallback(){
 
-        assertNotNull(videoModule.getSeekTimeLiveData());
+        assertNotNull(videoModule.getOnForwardBackwardCall());
     }
 
 
@@ -49,8 +49,8 @@ public class MainActivityTest{
      */
 
     @Test
-    public void testObservableVideoListener(){
-        assertNotNull(videoModule.getVideoViewListener());
+    public void testIsPausedPlayCallBack(){
+        assertNotNull(videoModule.getOnPausedCalled());
     }
 
 }
