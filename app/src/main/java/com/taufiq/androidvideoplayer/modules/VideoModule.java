@@ -21,7 +21,8 @@ import dagger.Provides;
 public class VideoModule {
 
 
-    private MutableLiveData<Integer> mutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> onPausedCalled = new MutableLiveData<>();
 
 
     /**
@@ -43,24 +44,20 @@ public class VideoModule {
         @Override
         public void onTimeBarSeekChanged(boolean ffwdrwd) {
 
-            if(ffwdrwd){
-                //seeking backwards
-                Log.e("*** SEEK", "back");
-            }else {
-                //seeking forward
-                Log.e("*** SEEK", "forw");
-            }
+            mutableLiveData.setValue(ffwdrwd);
 
         }
 
         @Override
         public void onResume() {
             Log.e("*** PLAY", "playing");
+            onPausedCalled.setValue(false);
         }
 
         @Override
         public void onPause() {
             Log.e("*** PAUSE", "paused");
+            onPausedCalled.setValue(true);
         }
 
     };
@@ -76,12 +73,12 @@ public class VideoModule {
     }
 
     /**
-     * Returns the seek time live date (which works as observable)
+     * Returns whether the controller button pressed is forward or backward
      * @return
      */
     @Provides
     @Singleton
-    public MutableLiveData<Integer> getSeekTimeLiveData() {
+    public MutableLiveData<Boolean> getSeekTimeLiveData() {
         return mutableLiveData;
     }
 
@@ -125,6 +122,12 @@ public class VideoModule {
         });
 
     }
+
+
+    public MutableLiveData<Boolean> getOnPausedCalled() {
+        return onPausedCalled;
+    }
+
 }
 
 

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.MediaController;
+import android.widget.Toast;
 
 import com.taufiq.androidvideoplayer.binders.UiManager;
 import com.taufiq.androidvideoplayer.core.ApplicationSingleton;
@@ -54,10 +55,24 @@ public class MainActivity extends AppCompatActivity {
 
         videoModule.setPrepare(this, uiManager, binding, mediaController, position);
 
-        videoModule.getSeekTimeLiveData().observe(this, new Observer<Integer>() {
+        videoModule.getSeekTimeLiveData().observe(this, new Observer<Boolean>() {
             @Override
-            public void onChanged(@Nullable Integer currentTime) {
+            public void onChanged(@Nullable Boolean ffwdrwd) {
+                if(ffwdrwd)
+                    Toast.makeText(MainActivity.this, getString(R.string.backward), Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(MainActivity.this, getString(R.string.forward), Toast.LENGTH_SHORT).show();
+            }
+        });
 
+
+        videoModule.getOnPausedCalled().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean isPausedCalled) {
+                if(isPausedCalled)
+                    Toast.makeText(MainActivity.this, getString(R.string.paused), Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(MainActivity.this, getString(R.string.play), Toast.LENGTH_SHORT).show();
             }
         });
 
