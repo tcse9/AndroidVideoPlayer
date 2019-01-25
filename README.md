@@ -3,10 +3,10 @@
 - The dummy video used has been taken from in-app raw folder.
 
 ## Technology used
-- Databindings
-- Dagger 2 as dependency injection
-- Robolectric as unit test
-- MVVM, Singleton, Observer as basic designpattern
+- Databindings.
+- Dagger 2 as dependency injection.
+- Robolectric as unit test.
+- ViewModel, Singleton, Observer as basic design pattern.
 
 ## Special note
 - Several test case is written in [MainActivityTest.java](app/src/test/java/com/taufiq/androidvideoplayer/MainActivityTest.java) class. You can run and test.
