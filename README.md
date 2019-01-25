@@ -6,6 +6,7 @@
 - Databindings
 - Dagger 2 as dependency injection
 - Robolectric as unit test
+- MVVM, Singleton, Observer as basic designpattern
 
 ## Special note
 - Several test case is written in [MainActivityTest.java](app/src/test/java/com/taufiq/androidvideoplayer/MainActivityTest.java) class. You can run and test.
