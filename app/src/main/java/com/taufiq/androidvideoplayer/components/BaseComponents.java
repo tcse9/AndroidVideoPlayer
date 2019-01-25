@@ -1,11 +1,11 @@
 package com.taufiq.androidvideoplayer.components;
 
 import com.taufiq.androidvideoplayer.modules.VideoModule;
+import com.taufiq.androidvideoplayer.viewmodels.ContentViewModel;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
-import viewmodels.ContentViewModel;
 
 
 /**

@@ -1,4 +1,4 @@
-package viewmodels;
+package com.taufiq.androidvideoplayer.viewmodels;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;

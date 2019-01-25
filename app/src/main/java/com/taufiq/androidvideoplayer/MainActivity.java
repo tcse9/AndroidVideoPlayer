@@ -17,7 +17,7 @@ import com.taufiq.androidvideoplayer.binders.UiManager;
 import com.taufiq.androidvideoplayer.databinding.ActivityMainBinding;
 import com.taufiq.androidvideoplayer.utils.Constants;
 
-import viewmodels.ContentViewModel;
+import com.taufiq.androidvideoplayer.viewmodels.ContentViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
